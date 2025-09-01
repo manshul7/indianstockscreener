@@ -56,8 +56,7 @@ print(data)
 data_rsi=data.loc[:,(slice(None),'RSI')]
 print(data_rsi)
 
-plt.plot(data_rsi)
-plt.show()
+
 
 sma_50_df = pd.DataFrame(index=data.index)
 
