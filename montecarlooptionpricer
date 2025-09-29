@@ -1,0 +1,50 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+import random
+
+
+K = float(input("enter the strike price"))
+V = float(input("enter the volatility"))
+T = float(input("enter expiry time in years"))
+R = float(input("enter interest rate"))
+P = int(input("enter the amount of paths")) 
+S = float(input("enter the spot price"))
+print({K},{V},{T},{R},{P},{S})
+
+class mcpricer:
+    def __init__(self, strike, vol, expiry, rate, paths, spot):
+        self.variance = vol ** 2 * expiry
+        self.left = rate * expiry
+        self.root_variance = math.sqrt(self.variance)
+        self.right = -0.5 * self.variance
+        self.exp = spot * math.exp(self.left + self.right)
+        self.runningSum = 0
+        self.rate = rate  
+        self.expiry = expiry  
+        
+        
+        self.path_values = []
+        
+        for i in range(0, paths):
+            Z = np.random.normal()
+            cexp = self.exp * math.exp(self.root_variance * Z)
+            St = cexp - strike
+            St = St if St > 0 else 0
+            self.runningSum += St
+            self.path_values.append(St)  
+            
+        self.mean = self.runningSum / paths
+        self.mean = self.mean * math.exp(-self.rate * self.expiry)  
+        
+    def getmean(self): 
+        return round(self.mean, 2)          
+
+model = mcpricer(K, V, T, R, P, S)
+print("Option price:", model.getmean())
+
+plt.plot(model.path_values)
+plt.title('Monte Carlo Simulation Paths')
+plt.xlabel('Path Index')
+plt.ylabel('Option Payoff')
+plt.show()
