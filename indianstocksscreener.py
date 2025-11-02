@@ -59,12 +59,12 @@ print(data_rsi)
 
 sma_50_df = pd.DataFrame(index=data.index)
 
-# Fix 2: Initialize sma_50 dictionary
+
 sma_50 = {}
 
 for ticker in yf_tickers[:10]:
     close_prices = data.loc[:, (ticker, 'Close')]
-    # Fix 3: Use close_prices.values directly instead of trying to access it as a column
+    
     sma_50[ticker] = pd.Series(close_prices.values).rolling(window=50).mean().values
 
 for ticker in yf_tickers[:10]:
@@ -81,10 +81,10 @@ for ticker in yf_tickers[:10]:
     close_prices = data.loc[:, (ticker, 'Close')]
     sma_150[ticker]=pd.Series(close_prices.values).rolling(window=150).mean().values
     
-for ticker in yf_tickers[:10]:  # Fixed indentation - this was inside the previous loop
+for ticker in yf_tickers[:10]: 
     data[(ticker,'SMA_150')]=sma_150[ticker]
     
-print(data)  # Fixed indentation - this was inside the loop
+print(data) 
 
 sma_150_prices=data.loc[:,(slice(None),'SMA_150')]
 print(sma_150_prices)
@@ -106,18 +106,18 @@ print(latest_close_1)
 def find_signals(yf_tickers):
     signals = []
     
-    for ticker in yf_tickers[:10]:  # Iterate through tickers
+    for ticker in yf_tickers[:10]:  
         try:
-            # Get the latest values for this ticker
+        
             ticker_rsi = latest_rsi[ticker] if ticker in latest_rsi else None
             ticker_sma_50 = latest_sma_50[ticker]['SMA_50'] if ticker in latest_sma_50 else None
             ticker_sma_150 = latest_sma_150[ticker]['SMA_150'] if ticker in latest_sma_150 else None
             
-            # Skip this ticker if any required data is missing
+           
             if ticker_rsi is None or ticker_sma_50 is None or ticker_sma_150 is None:
                 continue
             
-            # Convert Series to scalar values if needed
+           
             if hasattr(ticker_rsi, 'item'):
                 ticker_rsi = ticker_rsi.item()
             if hasattr(ticker_sma_50, 'item'):
@@ -126,7 +126,7 @@ def find_signals(yf_tickers):
                 ticker_sma_150 = ticker_sma_150.item()
                 
             bullish_signal = False
-            # Now comparing scalar values, not Series
+            
             if ticker_sma_50 > ticker_sma_150:
                 bullish_signal = True
             if ticker_rsi < 30 and ticker_sma_50 > ticker_sma_150:
@@ -145,7 +145,7 @@ def find_signals(yf_tickers):
             else:
                 signals.append({'ticker': ticker, 'signal': 'Neutral', 'RSI': ticker_rsi, 'MA50': ticker_sma_50, 'MA150': ticker_sma_150})
         except Exception as e:
-            # Skip this ticker if there's any error
+           
             print(f"Error processing ticker {ticker}: {e}")
             continue
 
